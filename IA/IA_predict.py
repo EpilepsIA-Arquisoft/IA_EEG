@@ -39,6 +39,7 @@ def predict(body):
     os.remove(npy_output_path)
     return {'id_paciente': patient_id, 
             'id_examen': body['id_examen'], 
+            'ubicacion_fragmento': body['ubicacion_fragmento'],
             'num_fragmento': segment_id, 
             'total_fragmentos': body['total_fragmentos'],
             'num_picos': epileptic_segments}
