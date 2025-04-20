@@ -13,7 +13,7 @@ MODELS = os.path.join(BASE_PATH, 'models')
 ORIGIN = os.path.join(BASE_PATH, 'original_data')
 
 storage_client = storage.Client()
-BUCKET_NAME = "nombre-de-tu-bucket"
+BUCKET_NAME = "examenes-eeg"
 
 def predict(body):
     remote_path = body['ubicacion_fragmento']
