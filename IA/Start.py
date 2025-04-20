@@ -12,8 +12,8 @@ connection = pika.BlockingConnection(
 channel = connection.channel()
 
 # Asegurarse de que la cola exista
-channel.queue_declare(queue='ia_requests')
-channel.queue_declare(queue='ia_responses')
+channel.queue_declare(queue='ia_requests', durable=True, exclusive=False, auto_delete=False)
+channel.queue_declare(queue='ia_responses', durable=True, exclusive=False, auto_delete=False)
 
 def callback(ch, method, properties, body):
     entrada = json.loads(body)
@@ -23,7 +23,10 @@ def callback(ch, method, properties, body):
     channel.basic_publish(
         exchange='',
         routing_key='ia_responses',
-        body=json.dumps(resultado)
+        body=json.dumps(resultado),
+        properties=pika.BasicProperties(
+            delivery_mode=2  # 1 = no persistente, 2 = persistente
+        )
     )
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
