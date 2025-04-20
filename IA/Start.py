@@ -31,7 +31,7 @@ def callback(ch, method, properties, body):
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
-# Escuchar los mensajes entrantes
+# --> Escuchar los mensajes entrantes
 channel.basic_consume(queue='ia_requests', on_message_callback=callback)
 print("Esperando mensajes...")
 channel.start_consuming()
