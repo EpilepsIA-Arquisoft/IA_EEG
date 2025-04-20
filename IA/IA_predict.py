@@ -42,7 +42,7 @@ def predict(body):
             'ubicacion_fragmento': body['ubicacion_fragmento'],
             'num_fragmento': segment_id, 
             'total_fragmentos': body['total_fragmentos'],
-            'num_picos': epileptic_segments}
+            'num_picos': str(epileptic_segments)}
 
 
 def descargar_archivo_gcs(ruta_remota, ruta_local):
