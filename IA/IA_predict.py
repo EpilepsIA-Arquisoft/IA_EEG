@@ -23,7 +23,7 @@ def predict(body):
     edf_path = os.path.join(ORIGIN, f'{patient_id}_segment_{segment_id}.edf')
     descargar_archivo_gcs(remote_path, edf_path)
     
-    model = keras.models.load_model(os.path.join(MODELS, 'modelo_ia_epilepsia.h5'))
+    model = keras.models.load_model(os.path.join(MODELS, 'modelo_ia_EpilepsIA.h5'))
 
     npy_output_path = os.path.join(PROCESSING, f'{patient_id}_{segment_id}.npy')
     training_data_path = os.path.join(TRAINING, 'x_train.npy')
