@@ -104,7 +104,7 @@ def train_model(x_train, y_train, x_val, y_val):
     model.fit(x_train, y_train, epochs=10, validation_data=(x_val, y_val))
 
     model.save(os.path.join(MODELS, 'modelo_ia_EpilepsIA.h5'))
-    print("Modelo entrenado y guardado como 'modelo_ia_epilepsia.h5'")
+    print("Modelo entrenado y guardado como 'modelo_ia_EpilepsIA.h5'")
     return model
 #<x====================================================================================================================x>
 
