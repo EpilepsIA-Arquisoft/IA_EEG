@@ -3,7 +3,12 @@ import json
 from IA_predict import predict  # tu lógica IA aquí
 
 # Conexión al servidor RabbitMQ
-connection = pika.BlockingConnection(pika.ConnectionParameters('10.128.0.16'))
+rabbit_host = '10.128.0.16'
+rabbit_user = 'isis2503'
+rabbit_password = '1234'
+connection = pika.BlockingConnection(
+    pika.ConnectionParameters(host=rabbit_host,
+                              credentials=pika.PlainCredentials(rabbit_user, rabbit_password)))
 channel = connection.channel()
 
 # Asegurarse de que la cola exista
