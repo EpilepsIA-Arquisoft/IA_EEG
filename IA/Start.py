@@ -15,8 +15,6 @@ channel = connection.channel()
 channel.queue_declare(queue='ia_requests', durable=True, exclusive=False, auto_delete=False)
 channel.queue_declare(queue='ia_responses', durable=True, exclusive=False, auto_delete=False)
 
-channel.basic_qos(prefetch_count=1)
-
 def callback(ch, method, properties, body):
     try:
         entrada = json.loads(body)
@@ -33,6 +31,7 @@ def callback(ch, method, properties, body):
         )
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
+        print("Esperando mensajes...")
     except Exception as e:
         print("Error procesando el mensaje:", e)
         
@@ -40,8 +39,7 @@ def callback(ch, method, properties, body):
 # --> Escuchar los mensajes entrantes
 channel.basic_consume(
     queue='ia_requests', 
-    on_message_callback=callback, 
-    auto_ack=False)
+    on_message_callback=callback)
 
 print("Esperando mensajes...")
 channel.start_consuming()
