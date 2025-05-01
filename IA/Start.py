@@ -15,6 +15,8 @@ channel = connection.channel()
 channel.queue_declare(queue='ia_requests', durable=True, exclusive=False, auto_delete=False)
 channel.queue_declare(queue='ia_responses', durable=True, exclusive=False, auto_delete=False)
 
+channel.basic_qos(prefetch_count=1)  # Asegurarse de que solo se procese un mensaje a la vez
+
 def callback(ch, method, properties, body):
     try:
         entrada = json.loads(body)
