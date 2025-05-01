@@ -16,22 +16,30 @@ channel.queue_declare(queue='ia_requests', durable=True, exclusive=False, auto_d
 channel.queue_declare(queue='ia_responses', durable=True, exclusive=False, auto_delete=False)
 
 def callback(ch, method, properties, body):
-    entrada = json.loads(body)
-    resultado = predict(entrada)
-    
-    # Enviar resultado a otra cola
-    channel.basic_publish(
-        exchange='',
-        routing_key='ia_responses',
-        body=json.dumps(resultado),
-        properties=pika.BasicProperties(
-            delivery_mode=2  # 1 = no persistente, 2 = persistente
+    try:
+        entrada = json.loads(body)
+        resultado = predict(entrada)
+        
+        # Enviar resultado a otra cola
+        channel.basic_publish(
+            exchange='',
+            routing_key='ia_responses',
+            body=json.dumps(resultado),
+            properties=pika.BasicProperties(
+                delivery_mode=2  # 1 = no persistente, 2 = persistente
+            )
         )
-    )
 
-    ch.basic_ack(delivery_tag=method.delivery_tag)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+    except Exception as e:
+        print("Error procesando el mensaje:", e)
+        
 
 # --> Escuchar los mensajes entrantes
-channel.basic_consume(queue='ia_requests', on_message_callback=callback)
+channel.basic_consume(
+    queue='ia_requests', 
+    on_message_callback=callback, 
+    auto_ack=False)
+
 print("Esperando mensajes...")
 channel.start_consuming()
