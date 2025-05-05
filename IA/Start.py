@@ -1,14 +1,18 @@
-import pika
+import pika, ssl
 import json
 from IA_predict import predict  # tu lógica IA aquí
 
 # Conexión al servidor RabbitMQ
+context = ssl.create_default_context(cafile="ca.crt")
+
 rabbit_host = '10.128.0.16'
 rabbit_user = 'isis2503'
 rabbit_password = '1234'
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host=rabbit_host,
-                              credentials=pika.PlainCredentials(rabbit_user, rabbit_password)))
+                              credentials=pika.PlainCredentials(rabbit_user, rabbit_password),
+                              port=5671,
+                              ssl_options=pika.SSLOptions(context)))
 channel = connection.channel()
 
 # Asegurarse de que la cola exista
