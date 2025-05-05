@@ -3,7 +3,9 @@ import json
 from IA_predict import predict  # tu lógica IA aquí
 
 # Conexión al servidor RabbitMQ
-context = ssl.create_default_context(cafile="ca.crt")
+context = ssl.create_default_context(cafile="IA/ca.crt")
+context.check_hostname = False
+context.verify_mode = ssl.CERT_NONE
 
 rabbit_host = '10.128.0.16'
 rabbit_user = 'isis2503'
