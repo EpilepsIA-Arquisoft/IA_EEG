@@ -1,20 +1,33 @@
 import pika, ssl
 import json
 from IA_predict import predict  # tu lógica IA aquí
+import base64
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+
+# Clave de cifrado (debe ser de 16, 24 o 32 bytes)
+KEY = b'abcdefghijklmnop'
+IV = b'0000000000000000'  # Vector de inicialización
+
+def encrypt_json(data):
+    cipher = AES.new(KEY, AES.MODE_CBC, IV)
+    json_str = json.dumps(data)  # Convierte JSON a string
+    encrypted_bytes = cipher.encrypt(pad(json_str.encode(), AES.block_size))
+    return base64.b64encode(encrypted_bytes).decode()
+
+def decrypt_json(encrypted_json):
+    encrypted_bytes = base64.b64decode(encrypted_json)
+    cipher = AES.new(KEY, AES.MODE_CBC, IV)
+    decrypted_bytes = unpad(cipher.decrypt(encrypted_bytes), AES.block_size)
+    return json.loads(decrypted_bytes.decode())
 
 # Conexión al servidor RabbitMQ
-context = ssl.create_default_context(cafile="IA/ca.crt")
-context.check_hostname = False
-context.verify_mode = ssl.CERT_NONE
-
 rabbit_host = '10.128.0.16'
 rabbit_user = 'isis2503'
 rabbit_password = '1234'
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host=rabbit_host,
-                              credentials=pika.PlainCredentials(rabbit_user, rabbit_password),
-                              port=5671,
-                              ssl_options=pika.SSLOptions(context)))
+                              credentials=pika.PlainCredentials(rabbit_user, rabbit_password)))
 channel = connection.channel()
 
 # Asegurarse de que la cola exista
@@ -25,14 +38,14 @@ channel.basic_qos(prefetch_count=1)  # Asegurarse de que solo se procese un mens
 
 def callback(ch, method, properties, body):
     try:
-        entrada = json.loads(body)
+        entrada = decrypt_json(body)
         resultado = predict(entrada)
         
         # Enviar resultado a otra cola
         channel.basic_publish(
             exchange='',
             routing_key='ia_responses',
-            body=json.dumps(resultado),
+            body= encrypt_json(resultado),
             properties=pika.BasicProperties(
                 delivery_mode=2  # 1 = no persistente, 2 = persistente
             )
