@@ -1,4 +1,4 @@
-import pika, ssl
+import pika
 import json
 from IA_predict import predict  # tu lógica IA aquí
 import base64
