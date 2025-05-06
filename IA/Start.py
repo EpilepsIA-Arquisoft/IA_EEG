@@ -22,7 +22,7 @@ def decrypt_json(encrypted_json):
     return json.loads(decrypted_bytes.decode())
 
 # Conexión al servidor RabbitMQ
-rabbit_host = '10.128.0.16'
+rabbit_host = '10.128.0.20'
 rabbit_user = 'isis2503'
 rabbit_password = '1234'
 connection = pika.BlockingConnection(
