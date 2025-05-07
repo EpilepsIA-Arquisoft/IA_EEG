@@ -25,9 +25,10 @@ def encrypt_json(data):
     # Generar HMAC para integridad
     hmac_signature = hmac.new(HMAC_KEY, encrypted_bytes, hashlib.sha256).hexdigest()
 
-    return {"data": encrypted_base64, "hmac": hmac_signature}
+    return json.dumps({"data": encrypted_base64, "hmac": hmac_signature})
 
 def decrypt_json(encrypted_json):
+    encrypted_json = json.loads(encrypted_json)
     encrypted_base64 = encrypted_json["data"]
     received_hmac = encrypted_json["hmac"]
 
